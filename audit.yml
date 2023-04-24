@@ -1,0 +1,205 @@
+---
+Parameters:
+  Prefix:
+    Type: String
+    Description: The prefix to use for naming resources.
+    Default: fin-ops
+  TrustedRole:
+    Type: String
+    Description: The ARN of the IAM role that should be able to fetch credentials from Secrets Manager.
+    Default: arn:aws:iam::445940767922:root
+
+Resources:
+  AuditPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub ${Prefix}-audit-policy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: iam:CreateServiceLinkedRole
+            Resource: arn:aws:iam::*:role/aws-service-role/compute-optimizer.amazonaws.com/AWSServiceRoleForComputeOptimizer*
+            Condition:
+              StringLike:
+                iam:AWSServiceName: compute-optimizer.amazonaws.com
+          
+          - Effect: Allow
+            Action: iam:PutRolePolicy
+            Resource: arn:aws:iam::*:role/aws-service-role/compute-optimizer.amazonaws.com/AWSServiceRoleForComputeOptimizer
+          
+          - Effect: Allow
+            Action:
+              - apigateway:Get*
+              - dynamodb:ListTables
+              - servicediscovery:List*
+              - cloudfront:Get*
+              - ce:GetCostAndUsage
+              - ce:GetReservationPurchaseRecommendation
+              - cloudwatch:ListMetrics
+              - pricing:GetProducts
+              - ce:ListSavingsPlansPurchaseRecommendationGeneration
+              - elasticloadbalancing:DescribeLoadBalancers
+              - billing:ListBillingViews
+              - ce:GetReservationUtilization
+              - dynamodb:DescribeTable
+              - ce:GetAnomalySubscriptions
+              - cloudwatch:ListDashboards
+              - cloudwatch:ListTagsForResource
+              - rds:DescribeDBInstances
+              - aws-portal:View*
+              - ce:GetReservationCoverage
+              - ce:GetAnomalyMonitors
+              - compute-optimizer:*EnrollmentStatus
+              - ce:DescribeCostCategoryDefinition
+              - ce:GetRightsizingRecommendation
+              - batch:Describe*
+              - pricing:DescribeServices
+              - logs:DescribeLogGroups
+              - application-autoscaling:DescribeScalableTargets
+              - elasticfilesystem:DescribeAccessPoints
+              - ce:GetAnomalies
+              - cloudwatch:GetMetricStatistics
+              - ce:ListCostCategoryDefinitions
+              - s3:GetStorageLens*
+              - ec2:Describe*
+              - organizations:ListAccounts
+              - pricing:GetAttributeValues
+              - s3:ListStorageLens*
+              - batch:List*
+              - cloudwatch:ListMetricStreams
+              - cloudfront:ListDistributions
+              - purchase-orders:ViewPurchaseOrders
+              - ce:GetSavingsPlansCoverage
+              - pi:GetResourceMetrics
+              - rds:DescribeDBClusters
+              - secretsmanager:ListSecrets
+              - cur:DescribeReportDefinitions
+              - elasticloadbalancing:DescribeInstanceHealth
+              - elasticloadbalancing:DescribeListeners
+              - elasticloadbalancing:DescribeLoadBalancerAttributes
+              - elasticloadbalancing:DescribeLoadBalancers
+              - elasticloadbalancing:DescribeTargetGroups
+              - elasticloadbalancing:DescribeTargetHealth
+              - s3:ListAllMyBuckets
+              - s3:ListBucketMultipartUploads
+              - s3:ListBucketVersions
+              - s3:ListMultipartUploadParts
+              - s3:ListMultiRegionAccessPoints
+              - s3:ListStorageLensConfigurations
+              - s3:GetAccessPoint
+              - s3:GetBucketLocation
+              - s3:GetBucketLogging
+              - s3:GetBucketPolicy
+              - s3:GetBucketPolicyStatus
+              - s3:GetBucketTagging
+              - s3:GetBucketVersioning
+              - s3:GetEncryptionConfiguration
+              - s3:GetIntelligentTieringConfiguration
+              - s3:GetLifecycleConfiguration
+              - s3:GetMetricsConfiguration
+              - s3:GetStorageLensConfiguration
+              - s3:GetStorageLensDashboard
+              - ebs:ListChangedBlocks
+              - ec2:DescribeSnapshotTierStatus
+              - ec2:DescribeSnapshots
+              - ecr:DescribeImages
+              - ecr:DescribeRegistry
+              - ecr:DescribeRepositories
+              - ecr:ListImages
+              - secretsmanager:ListSecrets
+            Resource: "*"
+
+          - Effect: Deny
+            Action:
+              - ce:UpdateNotificationSubscription
+              - purchase-orders:Modify*
+              - ce:DeleteNotificationSubscription
+              - ce:DeleteReport
+              - ce:CreateNotificationSubscription
+              - cur:PutReportDefinition
+              - cur:DeleteReportDefinition
+              - cur:ModifyReportDefinition
+              - aws-portal:Modify*
+              - purchase-orders:Update*
+              - s3:GetObject
+              - ce:UpdateReport
+              - ce:UpdatePreferences
+              - purchase-orders:Delete*
+              - ce:CreateReport
+              - budgets:ModifyBudget
+            Resource: "*"
+            
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+              - secretsmanager:DescribeSecret
+            Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${Prefix}-audit-user-secret-*
+  
+  AuditRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${Prefix}-audit-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Ref TrustedRole
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - !Ref AuditPolicy
+        - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
+        - arn:aws:iam::aws:policy/job-function/Billing
+        - arn:aws:iam::aws:policy/ComputeOptimizerReadOnlyAccess
+        - arn:aws:iam::aws:policy/AWSBillingReadOnlyAccess
+        - arn:aws:iam::aws:policy/AWSSavingsPlansReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonOpenSearchServiceReadOnlyAccess
+        - arn:aws:iam::aws:policy/CloudSearchReadOnlyAccess
+
+  AuditUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Sub ${Prefix}-audit-user
+      ManagedPolicyArns:
+        - !Ref AuditPolicy
+        - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
+        - arn:aws:iam::aws:policy/job-function/Billing
+        - arn:aws:iam::aws:policy/ComputeOptimizerReadOnlyAccess
+        - arn:aws:iam::aws:policy/AWSBillingReadOnlyAccess
+        - arn:aws:iam::aws:policy/AWSSavingsPlansReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonOpenSearchServiceReadOnlyAccess
+        - arn:aws:iam::aws:policy/CloudSearchReadOnlyAccess
+
+  AuditUserAccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref AuditUser
+
+  AuditUserSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub ${Prefix}-audit-user-secret
+      SecretString: !Sub
+        - '{"AccessKeyId":"${AccessKeyId}", 
+            "SecretAccessKey":"${SecretAccessKey}"}'
+        - AccessKeyId: !Ref AuditUserAccessKey
+          SecretAccessKey: !GetAtt AuditUserAccessKey.SecretAccessKey
+
+Outputs:
+  AuditRoleArn:
+    Description: The ARN of the audit role.
+    Value: !GetAtt AuditRole.Arn
+  AuditUserRoleArn:
+    Description: The ARN of the audit role assuming the trusted role.
+    Value: !GetAtt AuditRole.Arn
+  AuditUserArn:
+    Description: The ARN of the audit user.
+    Value: !GetAtt AuditUser.Arn
+  AuditUserAccessKeyId:
+    Description: The access key ID for the audit user.
+    Value: !Ref AuditUserAccessKey
+  AuditUserSecretArn:
+    Description: The ARN of the audit user's secret in Secrets Manager.
+    Value: !Ref AuditUserSecret

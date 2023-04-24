@@ -162,6 +162,15 @@ Resources:
     Type: AWS::IAM::User
     Properties:
       UserName: !Sub ${Prefix}-audit-user
+      ManagedPolicyArns:
+        - !Ref AuditPolicy
+        - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
+        - arn:aws:iam::aws:policy/job-function/Billing
+        - arn:aws:iam::aws:policy/ComputeOptimizerReadOnlyAccess
+        - arn:aws:iam::aws:policy/AWSBillingReadOnlyAccess
+        - arn:aws:iam::aws:policy/AWSSavingsPlansReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonOpenSearchServiceReadOnlyAccess
+        - arn:aws:iam::aws:policy/CloudSearchReadOnlyAccess
 
   AuditUserAccessKey:
     Type: AWS::IAM::AccessKey

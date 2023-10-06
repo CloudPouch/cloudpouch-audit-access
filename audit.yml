@@ -3,11 +3,11 @@ Parameters:
   Prefix:
     Type: String
     Description: The prefix to use for naming resources.
-    Default: fin-ops
+    Default: cloudpouch
   TrustedRole:
     Type: String
     Description: The ARN of the IAM role that should be able to fetch credentials from Secrets Manager.
-    Default: arn:aws:iam::445940767922:root
+    Default: arn:aws:iam::658620001254:root
 
 Resources:
   AuditPolicy:

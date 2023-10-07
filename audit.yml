@@ -187,6 +187,23 @@ Resources:
         - AccessKeyId: !Ref AuditUserAccessKey
           SecretAccessKey: !GetAtt AuditUserAccessKey.SecretAccessKey
 
+  EventBridgeRuleNotifyUponCreation:
+    Type: "AWS::Events::Rule"
+    Properties:
+      EventPattern:
+        source:
+          - "aws.cloudformation"
+        detail:
+          stack-id: 
+            - wildcard: "arn:aws:cloudformation:*:*:stack/CloudPouchCostAuditAccess*"
+          status-details:
+            status:
+              - "CREATE_COMPLETE"
+      State: "ENABLED"
+      Targets:
+        - Arn: "arn:aws:sns:eu-central-1:658620001254:cost-audit-notification-topic-SNSTopic-cNN5fBqQNKFy"
+          Id: "TargetId"
+
 Outputs:
   AuditRoleArn:
     Description: The ARN of the audit role.

@@ -1,19 +1,8 @@
----
-Parameters:
-  Prefix:
-    Type: String
-    Description: The prefix to use for naming resources.
-    Default: cloudpouch
-  TrustedRole:
-    Type: String
-    Description: The ARN of the IAM role that should be able to fetch credentials from Secrets Manager.
-    Default: arn:aws:iam::658620001254:root
-
 Resources:
   AuditPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: !Sub ${Prefix}-audit-policy
+      ManagedPolicyName: cloudpouch-audit-policy
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -134,18 +123,18 @@ Resources:
             Action:
               - secretsmanager:GetSecretValue
               - secretsmanager:DescribeSecret
-            Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${Prefix}-audit-user-secret-*
+            Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:cloudpouch-audit-user-secret-*
   
   AuditRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub ${Prefix}-audit-role
+      RoleName: cloudpouch-audit-role
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
           - Effect: Allow
             Principal:
-              AWS: !Ref TrustedRole
+              AWS: arn:aws:iam::658620001254:root
             Action:
               - sts:AssumeRole
       ManagedPolicyArns:
@@ -161,7 +150,7 @@ Resources:
   AuditUser:
     Type: AWS::IAM::User
     Properties:
-      UserName: !Sub ${Prefix}-audit-user
+      UserName: cloudpouch-audit-user
       ManagedPolicyArns:
         - !Ref AuditPolicy
         - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
@@ -179,8 +168,10 @@ Resources:
 
   AuditUserSecret:
     Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
     Properties:
-      Name: !Sub ${Prefix}-audit-user-secret
+      Name: cloudpouch-audit-user-secret
       SecretString: !Sub
         - '{"AccessKeyId":"${AccessKeyId}", 
             "SecretAccessKey":"${SecretAccessKey}"}'
@@ -193,30 +184,63 @@ Resources:
       EventPattern:
         source:
           - "aws.cloudformation"
+        detail-type: 
+          - "CloudFormation Stack Status Change"
         detail:
           stack-id: 
-            - wildcard: "arn:aws:cloudformation:*:*:stack/CloudPouchCostAuditAccess*"
+            - wildcard: !Sub "arn:aws:cloudformation:*:*:stack/${AWS::StackName}*"
           status-details:
             status:
               - "CREATE_COMPLETE"
       State: "ENABLED"
       Targets:
-        - Arn: "arn:aws:sns:eu-central-1:658620001254:cost-audit-notification-topic-SNSTopic-cNN5fBqQNKFy"
-          Id: "TargetId"
+        - Arn: "arn:aws:events:eu-central-1:658620001254:event-bus/cost-audit-client-account-enrolled"
+          Id: "TargetEventBus"
+          RoleArn: !GetAtt EventBusCrossAccountRole.Arn
+          DeadLetterConfig:
+            Arn: !GetAtt  EventBridgeRuleDlq.Arn
 
-Outputs:
-  AuditRoleArn:
-    Description: The ARN of the audit role.
-    Value: !GetAtt AuditRole.Arn
-  AuditUserRoleArn:
-    Description: The ARN of the audit role assuming the trusted role.
-    Value: !GetAtt AuditRole.Arn
-  AuditUserArn:
-    Description: The ARN of the audit user.
-    Value: !GetAtt AuditUser.Arn
-  AuditUserAccessKeyId:
-    Description: The access key ID for the audit user.
-    Value: !Ref AuditUserAccessKey
-  AuditUserSecretArn:
-    Description: The ARN of the audit user's secret in Secrets Manager.
-    Value: !Ref AuditUserSecret
+  EventBridgeRuleDlq:
+    Type: AWS::SQS::Queue
+    DeletionPolicy: Delete
+    Properties:
+      QueueName: cloudpouch-notify-dlq
+  
+  EventBridgeToToSqsPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: events.amazonaws.com
+          Action: sqs:SendMessage
+          Resource: !GetAtt EventBridgeRuleDlq.Arn
+      Queues:
+        - Ref: EventBridgeRuleDlq
+
+  EventBusCrossAccountRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "EventBusCrossAccountRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sts:AssumeRole
+
+  EventBusCrossAccountPolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: "EventBusCrossAccountPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "CrossAccountPublish"
+            Effect: "Allow"
+            Action: "events:PutEvents"
+            Resource: "arn:aws:events:eu-central-1:658620001254:event-bus/cost-audit-client-account-enrolled"
+      Roles:
+        - Ref: "EventBusCrossAccountRole"

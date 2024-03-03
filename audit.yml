@@ -20,62 +20,59 @@ Resources:
           - Effect: Allow
             Action:
               - apigateway:Get*
-              - dynamodb:ListTables
-              - servicediscovery:List*
-              - cloudfront:Get*
-              - ce:GetCostAndUsage
-              - ce:GetReservationPurchaseRecommendation
-              - cloudwatch:ListMetrics
-              - pricing:GetProducts
-              - ce:ListSavingsPlansPurchaseRecommendationGeneration
-              - elasticloadbalancing:DescribeLoadBalancers
-              - billing:ListBillingViews
-              - ce:GetReservationUtilization
-              - dynamodb:DescribeTable
-              - ce:GetAnomalySubscriptions
-              - cloudwatch:ListDashboards
-              - cloudwatch:ListTagsForResource
-              - rds:DescribeDBInstances
-              - aws-portal:View*
-              - ce:GetReservationCoverage
-              - ce:GetAnomalyMonitors
-              - compute-optimizer:*EnrollmentStatus
-              - ce:DescribeCostCategoryDefinition
-              - ce:GetRightsizingRecommendation
-              - batch:Describe*
-              - pricing:DescribeServices
-              - logs:DescribeLogGroups
               - application-autoscaling:DescribeScalableTargets
-              - elasticfilesystem:DescribeAccessPoints
-              - ce:GetAnomalies
-              - cloudwatch:GetMetricStatistics
-              - ce:ListCostCategoryDefinitions
-              - s3:GetStorageLens*
-              - ec2:Describe*
-              - organizations:ListAccounts
-              - pricing:GetAttributeValues
-              - s3:ListStorageLens*
+              - aws-portal:View*
+              - batch:Describe*
               - batch:List*
-              - cloudwatch:ListMetricStreams
-              - cloudfront:ListDistributions
-              - purchase-orders:ViewPurchaseOrders
+              - billing:ListBillingViews
+              - ce:DescribeCostCategoryDefinition
+              - ce:GetAnomalies
+              - ce:GetAnomalyMonitors
+              - ce:GetAnomalySubscriptions
+              - ce:GetCostAndUsage
+              - ce:GetReservationCoverage
+              - ce:GetReservationPurchaseRecommendation
+              - ce:GetReservationUtilization
+              - ce:GetRightsizingRecommendation
               - ce:GetSavingsPlansCoverage
-              - pi:GetResourceMetrics
-              - rds:DescribeDBClusters
-              - secretsmanager:ListSecrets
+              - ce:ListCostCategoryDefinitions
+              - ce:ListSavingsPlansPurchaseRecommendationGeneration
+              - cloudfront:Get*
+              - cloudfront:ListDistributions
+              - cloudwatch:GetMetricStatistics
+              - cloudwatch:ListDashboards
+              - cloudwatch:ListMetrics
+              - cloudwatch:ListMetricStreams
+              - cloudwatch:ListTagsForResource
+              - compute-optimizer:*EnrollmentStatus
               - cur:DescribeReportDefinitions
+              - dynamodb:DescribeTable
+              - dynamodb:ListTables
+              - ebs:ListChangedBlocks
+              - ec2:Describe*
+              - ec2:DescribeSnapshots
+              - ec2:DescribeSnapshotTierStatus
+              - ecr:DescribeImages
+              - ecr:DescribeRegistry
+              - ecr:DescribeRepositories
+              - ecr:ListImages
+              - elasticfilesystem:DescribeAccessPoints
               - elasticloadbalancing:DescribeInstanceHealth
               - elasticloadbalancing:DescribeListeners
               - elasticloadbalancing:DescribeLoadBalancerAttributes
               - elasticloadbalancing:DescribeLoadBalancers
+              - elasticloadbalancing:DescribeLoadBalancers
               - elasticloadbalancing:DescribeTargetGroups
               - elasticloadbalancing:DescribeTargetHealth
-              - s3:ListAllMyBuckets
-              - s3:ListBucketMultipartUploads
-              - s3:ListBucketVersions
-              - s3:ListMultipartUploadParts
-              - s3:ListMultiRegionAccessPoints
-              - s3:ListStorageLensConfigurations
+              - logs:DescribeLogGroups
+              - organizations:ListAccounts
+              - pi:GetResourceMetrics
+              - pricing:DescribeServices
+              - pricing:GetAttributeValues
+              - pricing:GetProducts
+              - purchase-orders:ViewPurchaseOrders
+              - rds:DescribeDBClusters
+              - rds:DescribeDBInstances
               - s3:GetAccessPoint
               - s3:GetBucketLocation
               - s3:GetBucketLogging
@@ -87,36 +84,39 @@ Resources:
               - s3:GetIntelligentTieringConfiguration
               - s3:GetLifecycleConfiguration
               - s3:GetMetricsConfiguration
+              - s3:GetStorageLens*
               - s3:GetStorageLensConfiguration
               - s3:GetStorageLensDashboard
-              - ebs:ListChangedBlocks
-              - ec2:DescribeSnapshotTierStatus
-              - ec2:DescribeSnapshots
-              - ecr:DescribeImages
-              - ecr:DescribeRegistry
-              - ecr:DescribeRepositories
-              - ecr:ListImages
+              - s3:ListAllMyBuckets
+              - s3:ListBucketMultipartUploads
+              - s3:ListBucketVersions
+              - s3:ListMultipartUploadParts
+              - s3:ListMultiRegionAccessPoints
+              - s3:ListStorageLens*
+              - s3:ListStorageLensConfigurations
               - secretsmanager:ListSecrets
+              - secretsmanager:ListSecrets
+              - servicediscovery:List*
             Resource: "*"
 
           - Effect: Deny
             Action:
-              - ce:UpdateNotificationSubscription
-              - purchase-orders:Modify*
+              - aws-portal:Modify*
+              - budgets:ModifyBudget
+              - ce:CreateNotificationSubscription
+              - ce:CreateReport
               - ce:DeleteNotificationSubscription
               - ce:DeleteReport
-              - ce:CreateNotificationSubscription
-              - cur:PutReportDefinition
+              - ce:UpdateNotificationSubscription
+              - ce:UpdatePreferences
+              - ce:UpdateReport
               - cur:DeleteReportDefinition
               - cur:ModifyReportDefinition
-              - aws-portal:Modify*
+              - cur:PutReportDefinition
+              - purchase-orders:Delete*
+              - purchase-orders:Modify*
               - purchase-orders:Update*
               - s3:GetObject
-              - ce:UpdateReport
-              - ce:UpdatePreferences
-              - purchase-orders:Delete*
-              - ce:CreateReport
-              - budgets:ModifyBudget
             Resource: "*"
             
           - Effect: Allow

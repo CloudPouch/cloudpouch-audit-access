@@ -64,6 +64,7 @@ Resources:
               - elasticloadbalancing:DescribeLoadBalancers
               - elasticloadbalancing:DescribeTargetGroups
               - elasticloadbalancing:DescribeTargetHealth
+              - iam:GetPolicy
               - logs:DescribeLogGroups
               - organizations:ListAccounts
               - pi:GetResourceMetrics
@@ -82,8 +83,10 @@ Resources:
               - s3:GetBucketVersioning
               - s3:GetEncryptionConfiguration
               - s3:GetIntelligentTieringConfiguration
+              - s3:GetInventoryConfiguration
               - s3:GetLifecycleConfiguration
               - s3:GetMetricsConfiguration
+              - s3:GetReplicationConfiguration
               - s3:GetStorageLens*
               - s3:GetStorageLensConfiguration
               - s3:GetStorageLensDashboard
@@ -139,6 +142,7 @@ Resources:
               - sts:AssumeRole
       ManagedPolicyArns:
         - !Ref AuditPolicy
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
         - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
         - arn:aws:iam::aws:policy/job-function/Billing
         - arn:aws:iam::aws:policy/ComputeOptimizerReadOnlyAccess
@@ -153,6 +157,7 @@ Resources:
       UserName: cloudpouch-audit-user
       ManagedPolicyArns:
         - !Ref AuditPolicy
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
         - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
         - arn:aws:iam::aws:policy/job-function/Billing
         - arn:aws:iam::aws:policy/ComputeOptimizerReadOnlyAccess

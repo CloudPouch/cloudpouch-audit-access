@@ -31,6 +31,7 @@ Resources:
               - ssm:GetParameter
               - ssm:GetParameters
               - ssm:GetParametersByPath
+              - ssm:StartSession # remote access to EC2 instance
               - timestream:Select
               - timestream:SelectValues
             Resource: "*"

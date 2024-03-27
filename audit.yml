@@ -142,7 +142,7 @@ Resources:
           - Effect: Allow
             Action: iam:PutRolePolicy
             Resource: arn:aws:iam::*:role/aws-service-role/compute-optimizer.amazonaws.com/AWSServiceRoleForComputeOptimizer
-            
+
   AuditRole:
     Type: AWS::IAM::Role
     Properties:

@@ -192,6 +192,7 @@ Resources:
   EventBridgeRuleDlq:
     Type: AWS::SQS::Queue
     DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
     Properties:
       QueueName: cost-opt-audit-notify-dlq
   

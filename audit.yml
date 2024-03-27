@@ -2,21 +2,59 @@ Resources:
   AuditPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: cloudpouch-audit-policy
+      ManagedPolicyName: cost-opt-audit-policy
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
-          - Effect: Allow
-            Action: iam:CreateServiceLinkedRole
-            Resource: arn:aws:iam::*:role/aws-service-role/compute-optimizer.amazonaws.com/AWSServiceRoleForComputeOptimizer*
-            Condition:
-              StringLike:
-                iam:AWSServiceName: compute-optimizer.amazonaws.com
-          
-          - Effect: Allow
-            Action: iam:PutRolePolicy
-            Resource: arn:aws:iam::*:role/aws-service-role/compute-optimizer.amazonaws.com/AWSServiceRoleForComputeOptimizer
-          
+          - Sid: DenyReadAccessToObjectsStoringCustomerData
+            Effect: Deny
+            Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetItem
+              - dynamodb:GetRecords
+              - dynamodb:Query
+              - dynamodb:Scan
+              - ec2messages:GetMessages
+              - ecr:BatchCheckLayerAvailability
+              - ecr:GetAuthorizationToken
+              - ecr:GetDownloadUrlForLayer
+              - kinesis:GetRecords
+              - kinesis:SubscribeToShard
+              - logs:GetLogEvents
+              - logs:GetLogRecord
+              - neptune-db:GetStreamRecords
+              - neptune-db:ReadDataViaQuery
+              - s3:GetObject
+              - secretsmanager:BatchGetSecretValue
+              - secretsmanager:GetSecretValue
+              - sqs:ReceiveMessage
+              - ssm:GetParameter
+              - ssm:GetParameters
+              - ssm:GetParametersByPath
+              - timestream:Select
+              - timestream:SelectValues
+            Resource: "*"
+
+          - Sid: DenyAnyModificationsAroundCosts
+            Effect: Deny
+            Action:
+              - aws-portal:Modify*
+              - budgets:ModifyBudget
+              - ce:CreateNotificationSubscription
+              - ce:CreateReport
+              - ce:DeleteNotificationSubscription
+              - ce:DeleteReport
+              - ce:UpdateNotificationSubscription
+              - ce:UpdatePreferences
+              - ce:UpdateReport
+              - cur:DeleteReportDefinition
+              - cur:ModifyReportDefinition
+              - cur:PutReportDefinition
+              - purchase-orders:Delete*
+              - purchase-orders:Modify*
+              - purchase-orders:Update*
+            Resource: "*"
+
           - Effect: Allow
             Action:
               - apigateway:Get*
@@ -25,18 +63,9 @@ Resources:
               - batch:Describe*
               - batch:List*
               - billing:ListBillingViews
-              - ce:DescribeCostCategoryDefinition
-              - ce:GetAnomalies
-              - ce:GetAnomalyMonitors
-              - ce:GetAnomalySubscriptions
-              - ce:GetCostAndUsage
-              - ce:GetReservationCoverage
-              - ce:GetReservationPurchaseRecommendation
-              - ce:GetReservationUtilization
-              - ce:GetRightsizingRecommendation
-              - ce:GetSavingsPlansCoverage
-              - ce:ListCostCategoryDefinitions
-              - ce:ListSavingsPlansPurchaseRecommendationGeneration
+              - ce:Describe*
+              - ce:Get*
+              - ce:List*
               - cloudfront:Get*
               - cloudfront:ListDistributions
               - cloudwatch:GetMetricStatistics
@@ -102,90 +131,44 @@ Resources:
               - servicediscovery:List*
             Resource: "*"
 
-          - Effect: Deny
-            Action:
-              - aws-portal:Modify*
-              - budgets:ModifyBudget
-              - ce:CreateNotificationSubscription
-              - ce:CreateReport
-              - ce:DeleteNotificationSubscription
-              - ce:DeleteReport
-              - ce:UpdateNotificationSubscription
-              - ce:UpdatePreferences
-              - ce:UpdateReport
-              - cur:DeleteReportDefinition
-              - cur:ModifyReportDefinition
-              - cur:PutReportDefinition
-              - purchase-orders:Delete*
-              - purchase-orders:Modify*
-              - purchase-orders:Update*
-              - s3:GetObject
-            Resource: "*"
-            
           - Effect: Allow
-            Action:
-              - secretsmanager:GetSecretValue
-              - secretsmanager:DescribeSecret
-            Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:cloudpouch-audit-user-secret-*
-  
+            Action: iam:CreateServiceLinkedRole
+            Resource: arn:aws:iam::*:role/aws-service-role/compute-optimizer.amazonaws.com/AWSServiceRoleForComputeOptimizer*
+            Condition:
+              StringLike:
+                iam:AWSServiceName: compute-optimizer.amazonaws.com
+
+          - Effect: Allow
+            Action: iam:PutRolePolicy
+            Resource: arn:aws:iam::*:role/aws-service-role/compute-optimizer.amazonaws.com/AWSServiceRoleForComputeOptimizer
+            
   AuditRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: cloudpouch-audit-role
+      RoleName: cost-opt-audit-role
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
           - Effect: Allow
             Principal:
-              AWS: arn:aws:iam::658620001254:root
+              AWS: arn:aws:iam::658620001254:user/paweliq
             Action:
               - sts:AssumeRole
       ManagedPolicyArns:
         - !Ref AuditPolicy
-        - arn:aws:iam::aws:policy/ReadOnlyAccess
-        - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
-        - arn:aws:iam::aws:policy/job-function/Billing
-        - arn:aws:iam::aws:policy/ComputeOptimizerReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonOpenSearchServiceReadOnlyAccess
         - arn:aws:iam::aws:policy/AWSBillingReadOnlyAccess
         - arn:aws:iam::aws:policy/AWSSavingsPlansReadOnlyAccess
-        - arn:aws:iam::aws:policy/AmazonOpenSearchServiceReadOnlyAccess
         - arn:aws:iam::aws:policy/CloudSearchReadOnlyAccess
-
-  AuditUser:
-    Type: AWS::IAM::User
-    Properties:
-      UserName: cloudpouch-audit-user
-      ManagedPolicyArns:
-        - !Ref AuditPolicy
-        - arn:aws:iam::aws:policy/ReadOnlyAccess
-        - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
-        - arn:aws:iam::aws:policy/job-function/Billing
         - arn:aws:iam::aws:policy/ComputeOptimizerReadOnlyAccess
-        - arn:aws:iam::aws:policy/AWSBillingReadOnlyAccess
-        - arn:aws:iam::aws:policy/AWSSavingsPlansReadOnlyAccess
-        - arn:aws:iam::aws:policy/AmazonOpenSearchServiceReadOnlyAccess
-        - arn:aws:iam::aws:policy/CloudSearchReadOnlyAccess
-
-  AuditUserAccessKey:
-    Type: AWS::IAM::AccessKey
-    Properties:
-      UserName: !Ref AuditUser
-
-  AuditUserSecret:
-    Type: AWS::SecretsManager::Secret
-    DeletionPolicy: Delete
-    UpdateReplacePolicy: Delete
-    Properties:
-      Name: cloudpouch-audit-user-secret
-      SecretString: !Sub
-        - '{"AccessKeyId":"${AccessKeyId}", 
-            "SecretAccessKey":"${SecretAccessKey}"}'
-        - AccessKeyId: !Ref AuditUserAccessKey
-          SecretAccessKey: !GetAtt AuditUserAccessKey.SecretAccessKey
+        - arn:aws:iam::aws:policy/job-function/Billing
+        - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
 
   EventBridgeRuleNotifyUponCreation:
     Type: "AWS::Events::Rule"
     Properties:
+      Name: "cost-opt-audit-notify-on-creation"
       EventPattern:
         source:
           - "aws.cloudformation"
@@ -209,7 +192,7 @@ Resources:
     Type: AWS::SQS::Queue
     DeletionPolicy: Delete
     Properties:
-      QueueName: cloudpouch-notify-dlq
+      QueueName: cost-opt-audit-notify-dlq
   
   EventBridgeToToSqsPolicy:
     Type: AWS::SQS::QueuePolicy

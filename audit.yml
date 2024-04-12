@@ -95,6 +95,8 @@ Resources:
               - elasticloadbalancing:DescribeTargetGroups
               - elasticloadbalancing:DescribeTargetHealth
               - iam:GetPolicy
+              - iam:ListAccountAliases
+              - iam:GetAccountSummary
               - logs:DescribeLogGroups
               - organizations:ListAccounts
               - pi:GetResourceMetrics

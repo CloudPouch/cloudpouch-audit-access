@@ -94,6 +94,7 @@ Resources:
               - elasticloadbalancing:DescribeLoadBalancers
               - elasticloadbalancing:DescribeTargetGroups
               - elasticloadbalancing:DescribeTargetHealth
+              - eks:AccessKubernetesApi
               - iam:GetPolicy
               - iam:ListAccountAliases
               - iam:GetAccountSummary
@@ -132,6 +133,7 @@ Resources:
               - secretsmanager:ListSecrets
               - secretsmanager:ListSecrets
               - servicediscovery:List*
+              - trustedadvisor:RefreshCheck
             Resource: "*"
 
           - Effect: Allow

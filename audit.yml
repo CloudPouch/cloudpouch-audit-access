@@ -79,6 +79,7 @@ Resources:
               - dynamodb:DescribeTable
               - dynamodb:ListTables
               - ebs:ListChangedBlocks
+              - ebs:ListSnapshotBlocks
               - ec2:Describe*
               - ec2:DescribeSnapshots
               - ec2:DescribeSnapshotTierStatus
@@ -86,6 +87,7 @@ Resources:
               - ecr:DescribeRegistry
               - ecr:DescribeRepositories
               - ecr:ListImages
+              - eks:AccessKubernetesApi
               - elasticfilesystem:DescribeAccessPoints
               - elasticloadbalancing:DescribeInstanceHealth
               - elasticloadbalancing:DescribeListeners
@@ -94,10 +96,9 @@ Resources:
               - elasticloadbalancing:DescribeLoadBalancers
               - elasticloadbalancing:DescribeTargetGroups
               - elasticloadbalancing:DescribeTargetHealth
-              - eks:AccessKubernetesApi
+              - iam:GetAccountSummary
               - iam:GetPolicy
               - iam:ListAccountAliases
-              - iam:GetAccountSummary
               - logs:DescribeLogGroups
               - organizations:ListAccounts
               - pi:GetResourceMetrics

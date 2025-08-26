@@ -89,6 +89,14 @@ Resources:
               - ecr:ListImages
               - eks:AccessKubernetesApi
               - elasticfilesystem:DescribeAccessPoints
+              - elasticfilesystem:DescribeBackupPolicy
+              - elasticfilesystem:DescribeFileSystemPolicy
+              - elasticfilesystem:DescribeFileSystems
+              - elasticfilesystem:DescribeLifecycleConfiguration
+              - elasticfilesystem:DescribeMountTargets
+              - elasticfilesystem:DescribeMountTargetSecurityGroups
+              - elasticfilesystem:DescribeReplicationConfigurations
+              - elasticfilesystem:ListTagsForResource
               - elasticloadbalancing:DescribeInstanceHealth
               - elasticloadbalancing:DescribeListeners
               - elasticloadbalancing:DescribeLoadBalancerAttributes

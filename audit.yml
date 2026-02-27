@@ -170,6 +170,10 @@ Resources:
             Action:
               - ce:StartCommitmentPurchaseAnalysis
               - ce:StartSavingsPlansPurchaseRecommendationGeneration
+              - compute-optimizer:DeleteRecommendationPreferences
+              - compute-optimizer:PutRecommendationPreferences
+              - cost-optimization-hub:UpdateEnrollmentStatus
+              - cost-optimization-hub:UpdatePreferences
             Resource: "*"
 
           - Effect: Allow

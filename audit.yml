@@ -165,6 +165,13 @@ Resources:
               - trustedadvisor:RefreshCheck
             Resource: "*"
 
+          - Sid: AllowTriggerCostOptimizationAnalyses
+            Effect: Allow
+            Action:
+              - ce:StartCommitmentPurchaseAnalysis
+              - ce:StartSavingsPlansPurchaseRecommendationGeneration
+            Resource: "*"
+
           - Effect: Allow
             Action: iam:CreateServiceLinkedRole
             Resource: arn:aws:iam::*:role/aws-service-role/compute-optimizer.amazonaws.com/AWSServiceRoleForComputeOptimizer*

@@ -39,7 +39,11 @@ Resources:
           - Sid: DenyAnyModificationsAroundCosts
             Effect: Deny
             Action:
-              - aws-portal:Modify*
+              - billing:Delete*
+              - billing:Put*
+              - billing:Update*
+              - payments:MakePayment
+              - payments:UpdatePaymentPreferences
               - budgets:ModifyBudget
               - ce:CreateNotificationSubscription
               - ce:CreateReport
@@ -52,7 +56,7 @@ Resources:
               - cur:ModifyReportDefinition
               - cur:PutReportDefinition
               - purchase-orders:Delete*
-              - purchase-orders:Modify*
+              - purchase-orders:AddPurchaseOrder
               - purchase-orders:Update*
             Resource: "*"
 
@@ -60,10 +64,16 @@ Resources:
             Action:
               - apigateway:Get*
               - application-autoscaling:DescribeScalableTargets
-              - aws-portal:View*
+              - account:GetAccountInformation
+              - account:GetAlternateContact
+              - account:GetContactInformation
               - batch:Describe*
               - batch:List*
-              - billing:ListBillingViews
+              - bcm-data-exports:Get*
+              - bcm-data-exports:List*
+              - bcm-recommended-actions:ListRecommendedActions
+              - billing:Get*
+              - billing:List*
               - ce:Describe*
               - ce:Get*
               - ce:List*
@@ -75,6 +85,8 @@ Resources:
               - cloudwatch:ListMetricStreams
               - cloudwatch:ListTagsForResource
               - compute-optimizer:*EnrollmentStatus
+              - consolidatedbilling:Get*
+              - consolidatedbilling:List*
               - cur:DescribeReportDefinitions
               - dynamodb:DescribeTable
               - dynamodb:ListTables
@@ -101,19 +113,25 @@ Resources:
               - elasticloadbalancing:DescribeListeners
               - elasticloadbalancing:DescribeLoadBalancerAttributes
               - elasticloadbalancing:DescribeLoadBalancers
-              - elasticloadbalancing:DescribeLoadBalancers
               - elasticloadbalancing:DescribeTargetGroups
               - elasticloadbalancing:DescribeTargetHealth
+              - freetier:GetFreeTierUsage
               - iam:GetAccountSummary
               - iam:GetPolicy
               - iam:ListAccountAliases
+              - invoicing:Get*
+              - invoicing:List*
               - logs:DescribeLogGroups
               - organizations:ListAccounts
+              - payments:Get*
+              - payments:List*
               - pi:GetResourceMetrics
               - pricing:DescribeServices
               - pricing:GetAttributeValues
               - pricing:GetProducts
-              - purchase-orders:ViewPurchaseOrders
+              - purchase-orders:GetPurchaseOrder
+              - purchase-orders:ListPurchaseOrderInvoices
+              - purchase-orders:ListPurchaseOrders
               - rds:DescribeDBClusters
               - rds:DescribeDBInstances
               - s3:GetAccessPoint
@@ -140,8 +158,10 @@ Resources:
               - s3:ListStorageLens*
               - s3:ListStorageLensConfigurations
               - secretsmanager:ListSecrets
-              - secretsmanager:ListSecrets
               - servicediscovery:List*
+              - sustainability:GetCarbonFootprintSummary
+              - tax:Get*
+              - tax:List*
               - trustedadvisor:RefreshCheck
             Resource: "*"
 
@@ -177,6 +197,7 @@ Resources:
         - arn:aws:iam::aws:policy/ComputeOptimizerReadOnlyAccess
         - arn:aws:iam::aws:policy/job-function/Billing
         - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
+        - arn:aws:iam::aws:policy/CostOptimizationHubReadOnlyAccess
         - arn:aws:iam::aws:policy/ReadOnlyAccess
 
   EventBridgeRuleNotifyUponCreation:

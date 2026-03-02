@@ -71,6 +71,10 @@ Resources:
               - batch:List*
               - bcm-data-exports:Get*
               - bcm-data-exports:List*
+              - bcm-dashboards:Get*
+              - bcm-dashboards:List*
+              - bcm-pricing-calculator:Get*
+              - bcm-pricing-calculator:List*
               - bcm-recommended-actions:ListRecommendedActions
               - billing:Get*
               - billing:List*

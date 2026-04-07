@@ -19,6 +19,7 @@ The role is intended for read-only cost optimization auditing. It combines sever
 | `CostOptimizationHubReadOnlyAccess` | Read Cost Optimization Hub recommendations |
 | `AmazonOpenSearchServiceReadOnlyAccess` | Read OpenSearch domains |
 | `CloudSearchReadOnlyAccess` | Read CloudSearch domains |
+| `AmazonQDeveloperAccess` | Interact with Amazon Q Developer in the console |
 
 ---
 
@@ -55,6 +56,10 @@ Blocks modifications to:
 - Infrastructure metadata: EC2, RDS, EFS, ELB, EKS, ECR, DynamoDB, EBS, S3 (bucket-level only), CloudFront, API Gateway, Batch, CloudWatch metrics/dashboards, CloudSearch, OpenSearch, logs group list, Organizations accounts
 - Optimization tools: `compute-optimizer:*EnrollmentStatus`, `trustedadvisor:RefreshCheck`, `sustainability:GetCarbonFootprintSummary`, `pi:GetResourceMetrics`
 - Pricing API: `pricing:DescribeServices`, `GetAttributeValues`, `GetProducts`
+
+**CloudShell access** (`AllowCloudShellAccess`):
+- Create, start, stop, and delete CloudShell environments
+- Manage CloudShell sessions and file transfers
 
 **Trigger cost analyses** (`AllowTriggerCostOptimizationAnalyses`):
 - Start CE commitment purchase analysis and Savings Plans recommendation generation

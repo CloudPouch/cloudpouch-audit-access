@@ -214,6 +214,7 @@ Resources:
         - arn:aws:iam::aws:policy/job-function/ViewOnlyAccess
         - arn:aws:iam::aws:policy/CostOptimizationHubReadOnlyAccess
         - arn:aws:iam::aws:policy/ReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonQDeveloperAccess
 
   EventBridgeRuleNotifyUponCreation:
     Type: "AWS::Events::Rule"

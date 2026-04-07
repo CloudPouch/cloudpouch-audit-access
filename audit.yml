@@ -169,6 +169,20 @@ Resources:
               - trustedadvisor:RefreshCheck
             Resource: "*"
 
+          - Sid: AllowCloudShellAccess
+            Effect: Allow
+            Action:
+              - cloudshell:CreateEnvironment
+              - cloudshell:CreateSession
+              - cloudshell:DeleteEnvironment
+              - cloudshell:GetEnvironmentStatus
+              - cloudshell:GetFileDownloadUrls
+              - cloudshell:GetFileUploadUrls
+              - cloudshell:PutCredentials
+              - cloudshell:StartEnvironment
+              - cloudshell:StopEnvironment
+            Resource: "*"
+
           - Sid: AllowTriggerCostOptimizationAnalyses
             Effect: Allow
             Action:

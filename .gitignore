@@ -6,3 +6,4 @@ getUser.sh
 getUserCp.sh
 .envrc
 partners/
+.DS_Store

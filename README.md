@@ -1,6 +1,10 @@
 # Explainer video
 
-https://github.com/user-attachments/assets/0a8d6d98-6ade-4a08-afad-906d9cb42876
+
+
+https://github.com/user-attachments/assets/67ddf96a-5295-451b-a0e5-2a5cf941d5c3
+
+
 
 # cost-audit-access
 Defines privileges needed for conducting Cost Audit analysis on your AWS account, references AWS [Managed policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html).
